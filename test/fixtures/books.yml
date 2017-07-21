@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  titulo: MyString
+  fecha_publicacion: 2017-07-20 21:22:01
+  descripcion: MyString
+  promedio_calificacion: 1.5
+
+two:
+  titulo: MyString
+  fecha_publicacion: 2017-07-20 21:22:01
+  descripcion: MyString
+  promedio_calificacion: 1.5
