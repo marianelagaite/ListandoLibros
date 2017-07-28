@@ -30,11 +30,15 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-#Gemas particulares para este proyecto
+#Gemas para este proyecto
 gem 'devise'
+gem 'devise-i18n'
 gem 'jquery-rails'
 gem 'bootstrap-sass'
 gem 'jquery-turbolinks'
+gem 'will_paginate'
+gem 'activeadmin'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
