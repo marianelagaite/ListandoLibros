@@ -6,7 +6,8 @@
 
 # Ignore bundler config.
 /.bundle
-
+/public/system/books/images
+solr/data
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*

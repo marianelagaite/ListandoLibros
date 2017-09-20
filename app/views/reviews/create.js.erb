@@ -1,0 +1,11 @@
+$("#review-modal").modal("hide");
+
+$("#reviews-container").prepend("<%= j render @review %>")
+
+$("#raty-<%= @review.id %>").raty({
+	readOnly: true,
+	score: function(){
+	  return $(this).attr('data-score');
+	},
+	path: '/assets/',
+});

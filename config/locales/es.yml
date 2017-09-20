@@ -7,6 +7,10 @@ es:
         restrict_dependent_destroy:
           has_one: No se puede eliminar el registro porque existe un %{record} dependiente
           has_many: No se puede eliminar el registro porque existen %{record} dependientes
+    model:
+      book:
+        one: "libro"
+        other: "libros"
   date:
     abbr_day_names:
     - dom

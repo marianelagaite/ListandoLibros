@@ -1,64 +1,36 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: [:show, :edit, :update, :destroy]
+  before_action :set_book, only: [:show]
 
   # GET /books
   # GET /books.json
   def index
-    @books = Book.all
+    if params[:search].blank?
+      @books = Book.all.paginate(:page => params[:page], :per_page => 30)
+      @title = "Libros"
+    else
+      @books = Book.search(params[:search]).paginate(:page => params[:page], :per_page => 30)
+      if @books.any?
+        @title = "Libro/s encontrados"
+      else
+        @title = "No se encontró ningún libro"
+      end
+    end
   end
 
   # GET /books/1
   # GET /books/1.json
   def show
-  end
-
-  # GET /books/new
-  def new
-    @book = Book.new
-  end
-
-  # GET /books/1/edit
-  def edit
-  end
-
-  # POST /books
-  # POST /books.json
-  def create
-    @book = Book.new(book_params)
-
-    respond_to do |format|
-      if @book.save
-        format.html { redirect_to @book, notice: 'El libro '+ @book.titulo+' se agregó correctamente.' }
-        format.json { render :show, status: :created, location: @book }
-      else
-        format.html { render :new }
-        format.json { render json: @book.errors, status: :unprocessable_entity }
-      end
+    if user_signed_in?
+      @user_review = Review.get_review(@book.id, current_user.id)
+      @user_lists = BookList.where(user_id: current_user.id).order("nombre")
+      @selected_list = BookList.joins(:books).group('book_lists.id').where(user_id: current_user.id).where(books: {id: @book.id}).first
     end
-  end
-
-  # PATCH/PUT /books/1
-  # PATCH/PUT /books/1.json
-  def update
-    respond_to do |format|
-      if @book.update(book_params)
-        format.html { redirect_to @book, notice: 'El libro '+ @book.titulo+' se editó correctamente.' }
-        format.json { render :show, status: :ok, location: @book }
-      else
-        format.html { render :edit }
-        format.json { render json: @book.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /books/1
-  # DELETE /books/1.json
-  def destroy
-    @book.destroy
-    respond_to do |format|
-      format.html { redirect_to books_url, notice: 'El libro '+ @book.titulo+' se eliminó correctamente.' }
-      format.json { head :no_content }
-    end
+    @reviews = @book.reviews.includes(:user).paginate(:page => params[:page], :per_page => 5)
+    if @book.reviews.blank?
+      @average_review = 0
+    else
+      @average_review = @book.reviews.average(:rating).round(2)
+    end    
   end
 
   private
@@ -69,6 +41,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:titulo, :fecha_publicacion, :descripcion)
+      params.require(:book).permit(:titulo, :fecha_publicacion, :descripcion, :image, author_ids: [], genre_ids: [], book_list_ids: [])
     end
 end

@@ -9,21 +9,52 @@
           </button>
           <div class="navbar-brand">
             <%= link_to "Listando Libros", home_path %>
-          </div>>
+          </div>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>|
             <% if user_signed_in? %>
-              <li><%= link_to 'Cerrar sesión', destroy_user_session_path, method: :delete%></li>
+              <li>
+                <%= link_to user_book_lists_path(user_id: current_user.id) do%>
+                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Mis listas
+                <%end%>
+              </li>
+
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <%= current_user.user_name %>
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <% if current_user.admin? %>
+                    <li>
+                      <%= link_to rails_admin_path do%>
+                      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Administración
+                      <%end%>
+                    </li>
+                  <% end %>
+                  <li>
+                    <%= link_to edit_user_registration_path do%>
+                      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Editar cuenta
+                    <% end %>
+                  </li>                  
+                  <li>
+                    <%= link_to destroy_user_session_path, method: :delete do%>
+                      <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Cerrar sesión
+                    <% end %>
+                  </li>
+                </ul>
+              </li>
             <% else %>
               <li><%= link_to 'Iniciar sesión', new_user_session_path%></li>
               <li><%= link_to 'Registrarse', new_user_registration_path %></li>
             <% end %>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
+          <%= form_tag books_path, method: :get, class:'navbar-form navbar-right' do %>
+            <%= text_field_tag :search, params[:search], class: 'form-control', placeholder: "Buscar libros" %>
+            <%= button_tag(type: 'submit', class: "btn submit") do %>
+              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            <% end %>
+          <% end %>
         </div>
       </div>
     </nav>

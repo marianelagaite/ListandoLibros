@@ -1,12 +1,10 @@
-<%= form_with(model: book, local: true) do |form| %>
+ <%= form_with(model: book, local: true, html: {multipart: true}) do |form| %>
   <% if book.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(book.errors.count, "error") %> prohibited this book from being saved:</h2>
-
+    <div id="error_explanation" class="alert alert-danger">
       <ul>
-      <% book.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% book.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
@@ -17,15 +15,37 @@
   </div>
 
   <div class="field">
-    <%= form.label :fecha_publicacion %>
-    <%= form.datetime_select :fecha_publicacion, id: :book_fecha_publicacion %>
+    <%= form.label :image, "Imagen"%>
+    <%= form.file_field :image %>
+  </div>
+
+  <div class="field">
+    <%= form.label :fecha_publicacion, "Fecha de publicación" %>
+    <%= form.text_field :fecha_publicacion, id: :book_fecha_publicacion, class: "form-control datepicker" %>
+  <!--   <%= form.date_select :fecha_publicacion,{order:[:day,:month,:year], start_year: Date.today.year, end_year: Date.today.year - 100, use_month_numbers: true} %> -->
+<!--     <%= form.datetime_select :fecha_publicacion, id: :book_fecha_publicacion %> -->
   </div>
 
   <div class="field">
     <%= form.label :descripcion %>
-    <%= form.text_field :descripcion, id: :book_descripcion %>
+    <%= form.text_area :descripcion, id: :book_descripcion %>
   </div>
-
+  <div class="field">
+    <%= form.label :author_ids, "Autor/es" %>
+    <%= form.select :author_ids,
+        options_for_select(Author.all.map { |u| [u.nombre, u.id] }, @authors_list),
+        {},
+        { :multiple => true, class: 'chosen-select' }
+    %>
+  </div>
+  <div class="field">
+    <%= form.label :genre_ids, "Género/s" %>
+    <%= form.select :genre_ids,
+        options_for_select(Genre.all.map { |u| [u.nombre, u.id] }, @genres_list),
+        {},
+        { :multiple => true, class: 'chosen-select' }
+    %>
+  </div>
   <div class="actions">
     <%= form.submit %>
   </div>

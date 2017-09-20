@@ -1,0 +1,36 @@
+<h1 class="titulo_model">Mis listados </h1>
+<a data-toggle="modal" data-target="#add-list-modal">
+	<span class="glyphicon glyphicon-plus text-success" aria-hidden="true" style="font-size: 200%;"></span>
+</a>
+
+<div id="book_lists_container">
+	<% if @book_lists.any? %>
+		<%= render @book_lists || ""%>
+	<% else %>
+		<h2>No tienes ninguna lista</h2>
+	<% end %>
+</div>
+
+<!-- Add list modal -->
+<div id="add-list-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Crear una nueva lista</h4>
+      </div>
+      <%= form_for([current_user, current_user.book_lists.build], remote: true) do |f| %>
+        <div class="modal-body">
+		  <div class="form-group">
+		    <%= f.label :nombre %>
+		    <%= f.text_field :nombre, class: "form-control input-lg", placeholder: "Nombre"%>
+		  </div>
+        </div>
+
+        <div class="modal-footer">
+          <%= f.submit "Agregar lista", class: "btn btn-success btn-lg btn-block"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

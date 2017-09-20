@@ -1,24 +1,102 @@
-<p id="notice"><%= notice %></p>
+<h1><%= @book.titulo %>  <% if(user_signed_in? && current_user.admin?)%><%= link_to rails_admin.edit_path(model_name: 'book', id: @book.id), class: "btn btn-success" do %>
+      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+    <%end%>
+  <% end %></h1>
 
-<p>
-  <strong>Titulo:</strong>
-  <%= @book.titulo %>
-</p>
+<div class="col-md-4"><%= image_tag @book.image.url(:medium)%></div>
+<div class="col-md-8">
+  <div class="espacio">
+    <strong>Promedio calificación:</strong>
+    <div class="average-review-rating raty" data-score=<%= @average_review %>></div>
+  </div>
+  <div class="espacio">
+    <strong>Autor/es:</strong>
+    <% @book.authors.each_with_index do |author, index| %>
+      <% if index > 0 %> ,<%end%>
+      <%= author.nombre %></li>
+    <% end %>
+  </div>
 
-<p>
-  <strong>Fecha publicacion:</strong>
-  <%= @book.fecha_publicacion %>
-</p>
+  <div  class="espacio">
+    <strong>Géneros:</strong>
+    <% @book.genres.each_with_index do |genre, index| %>
+      <% if index > 0 %> ,<%end%>
+      <%= genre.nombre %></li>
+    <% end %>
+  </div>
 
-<p>
-  <strong>Descripcion:</strong>
-  <%= @book.descripcion %>
-</p>
+  <div class="espacio">
+    <strong>Descripción:</strong>
+    <%= @book.descripcion %>
+  </div>
+</div>
+<% if user_signed_in? %>
+  <div class="col-md-12 espacio-arriba">
+    <label>Agregar a una lista: </label>
+    <select id="select-list">
+      <option value=""></option>
+      <% @user_lists.each do |list| %>
+        <option value="<%=list.id%>" <% if (!@selected_list.nil? && @selected_list.id == list.id) %>selected<%end%>><%=list.nombre%></option>
+      <%end%>
+    </select>
+  </div>
+<% end %>
+<div class="col-md-12">
+  <h2 class="titulo_model">Críticas</h2>
+  <% if user_signed_in? %>
+    <% if @user_review.empty? %>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#review-modal">Criticar</button>
+    <% end %>
+  <% end %>
 
-<p>
-  <strong>Promedio calificacion:</strong>
-  <%= @book.promedio_calificacion %>
-</p>
+  <div id="reviews-container">
+    <% if(@reviews.any?) %>
+      <%= render @reviews || ""%>
+      <div class="col-md-12 apple_pagination">
+        <%= will_paginate @reviews, :previous_label => 'Anterior', :next_label => 'Siguiente' %>
+      </div>
+    <% else %>
+      <h3>Este libro no tiene ninguna crítica. Se el primero en dar tu opinión.</h3>
+    <% end %>
+  </div>  
+</div>
 
-<%= link_to 'Edit', edit_book_path(@book) %> |
-<%= link_to 'Back', books_path %>
+<!-- Review modal -->
+<div id="review-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Criticar <%= @book.titulo %></h4>
+      </div>
+      <%= form_for([@book, @book.reviews.build], remote: true) do |f| %>
+        <div class="modal-body">
+          <div class="form-group">
+            <div id="star-rating"></div>
+          </div>
+          <div class="form-group">
+            <%= f.text_area(:comment, class: "form-control input-lg", placeholder: "Escriba una crítica") %>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <%= f.submit "Agregar crítica", class: "btn btn-success btn-lg btn-block" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if user_signed_in? %>
+  <script>
+    var userId = <%= current_user.id %>
+    var bookId = <%= @book.id %>
+    $("#select-list").change(function() {
+      $.ajax({
+        url: "../users/"+ userId +"/book_lists/"+ $("#select-list option:selected").val()+"/listed_books",
+        type: "POST",
+        data: {'listed_book':{'book_id': bookId, 'book_list_id': $("#select-list option:selected").val()}}
+      });
+    }); 
+  </script>
+<% end %>  

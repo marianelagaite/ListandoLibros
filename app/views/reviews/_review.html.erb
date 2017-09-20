@@ -1,0 +1,3 @@
+<hr>
+<div class="row"><strong><%= review.user.try(:user_name) %></strong> - <div class="review-rating raty" id="raty-<%= review.id %>" data-score="<%= review.rating %>" style="display: inline;"></div></div>
+<%= review.comment %>

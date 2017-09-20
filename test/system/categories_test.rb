@@ -1,9 +1,9 @@
 require "application_system_test_case"
 
-class CategoriesTest < ApplicationSystemTestCase
+class GenresTest < ApplicationSystemTestCase
   # test "visiting the index" do
-  #   visit categories_url
+  #   visit genres_url
   #
-  #   assert_selector "h1", text: "Category"
+  #   assert_selector "h1", text: "Genre"
   # end
 end
